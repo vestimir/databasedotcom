@@ -281,6 +281,20 @@ module Databasedotcom
       result["topics"].collect { |topic| topic["name"] }
     end
 
+    # Resturns updated records from the Replication API
+    def updated(class_or_classname, start_date, end_date = Time.now)
+      clazz = find_or_materialize(class_or_classname)
+      result = http_get("/services/data/v#{self.version}/sobjects/#{clazz.sobject_name}/updated?start=#{start_date}&end=#{end_date}")
+      JSON.parse(result.body)
+    end
+
+    # Resturns deleted records from the Replication API
+    def deleted(class_or_classname, start_date, end_date = Time.now)
+      clazz = find_or_materialize(class_or_classname)
+      result = http_get("/services/data/v#{self.version}/sobjects/#{clazz.sobject_name}/deleted?start=#{start_date}&end=#{end_date}")
+      JSON.parse(result.body)
+    end
+
     # Performs an HTTP GET request to the specified path (relative to self.instance_url).  Query parameters are included from _parameters_.  The required
     # +Authorization+ header is automatically included, as are any additional headers specified in _headers_.  Returns the HTTPResult if it is of type
     # HTTPSuccess- raises SalesForceError otherwise.
